@@ -23,4 +23,9 @@ it under the same terms as Perl itself.
 
 =cut
 
+sub scan {
+    my ( $self, $url ) = @_;
+    return $url;
+}
+
 1;

@@ -1,5 +1,7 @@
 [% WRAPPER page.tt title = c.config.name ; END %]
+[% IF result %]<p>[% "We are scanning " _ url %]</p>[% END %]
 <form name="scan" method="post" action="scan">
+    <label for="url">Enter URL of web app to scan</label>
     <input type="text" name="url" value="" title="enter URL of web app to scan" />
     <input type="submit" value="Scan" />
 </form>
