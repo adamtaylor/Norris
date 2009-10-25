@@ -3,6 +3,7 @@ package Norris::Web::Model::TheSchwartz;
 use strict;
 use warnings;
 use parent 'Catalyst::Model';
+use TheSchwartz;
 
 =head1 NAME
 
