@@ -25,11 +25,14 @@ it under the same terms as Perl itself.
 =cut
 
 sub COMPONENT {
-    return TheSchwartz->new( databases => {
-                                            dsn => 'dbi:mysql:norris_jobs',
-                                            user => 'root',
-                                            pass => ''
-                                            } );
+    return TheSchwartz->new(
+                databases => [ {
+                                dsn => 'dbi:mysql:norris_jobs',
+                                user => 'root',
+                                pass => ''
+                            } ],
+                                verbose => 1,
+            );
 }
 
 1;
