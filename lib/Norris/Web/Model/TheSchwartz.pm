@@ -25,7 +25,7 @@ it under the same terms as Perl itself.
 =cut
 
 sub COMPONENT {
-    return TheSchwartz->new( database => {
+    return TheSchwartz->new( databases => {
                                             dsn => 'dbi:mysql:norris_jobs',
                                             user => 'root',
                                             pass => ''
