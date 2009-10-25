@@ -53,7 +53,7 @@ Handle the form submission on the index page.
 sub scan :Local {
     my ( $self, $c ) = @_;
     my $url = $c->req->body_params->{url};
-    $c->model('TheSchwartz')->insert( 'Norris::Scanner::Crawl', $url );
+    $c->model('TheSchwartz')->insert( 'Norris::Scanner::Crawler', $url );
     $c->stash(
         url => $url,
         result => $url,
