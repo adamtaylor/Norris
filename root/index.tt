@@ -1,0 +1,5 @@
+[% WRAPPER page.tt title = c.config.name ; END %]
+<form name="scan" method="post" action="scan">
+    <input type="text" name="url" value="" title="enter URL of web app to scan" />
+    <input type="submit" value="Scan" />
+</form>
