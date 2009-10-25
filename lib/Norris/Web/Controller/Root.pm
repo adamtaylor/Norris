@@ -24,17 +24,31 @@ Norris::Web::Controller::Root - Root Controller for Norris::Web
 
 =head2 index
 
+Display the default template index.tt.
+
 =cut
 
 sub index :Path :Args(0) {
     my ( $self, $c ) = @_;
 }
 
+=head2 default
+
+If an unknown URL is requested responde with a 404 Page not found.
+
+=cut
+
 sub default :Path {
     my ( $self, $c ) = @_;
     $c->response->body( 'Page not found' );
     $c->response->status(404);
 }
+
+=head2 scan
+
+Handle the form submission on the index page.
+
+=cut
 
 sub scan :Local {
     my ( $self, $c ) = @_;
