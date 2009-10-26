@@ -68,8 +68,8 @@ sub scan :Local {
         
     $c->model('TheSchwartz')->insert( 'Norris::Scanner::Crawler', $job_args );
     $c->stash(
-        url => $url,
-        result => $url,
+        url => $url_str,
+        result => $url_str,
         template => 'index.tt',
     )
 }
