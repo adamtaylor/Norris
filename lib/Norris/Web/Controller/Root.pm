@@ -4,6 +4,9 @@ use strict;
 use warnings;
 use parent 'Catalyst::Controller';
 
+use URI;
+use Data::Dumper;
+
 #
 # Sets the actions in this controller to be registered with no prefix
 # so they function identically to actions created in MyApp.pm
@@ -53,7 +56,17 @@ Handle the form submission on the index page.
 sub scan :Local {
     my ( $self, $c ) = @_;
     my $url = $c->req->body_params->{url};
-    $c->model('TheSchwartz')->insert( 'Norris::Scanner::Crawler', $url );
+    
+    my $u = URI->new($url);
+    $u = $u->canonical;
+    
+    my $url_str = $u->as_string;
+    
+    my $job_args = { base_url => $url_str,
+                        urls_seen => {},
+                        process => $url_str };
+        
+    $c->model('TheSchwartz')->insert( 'Norris::Scanner::Crawler', $job_args );
     $c->stash(
         url => $url,
         result => $url,

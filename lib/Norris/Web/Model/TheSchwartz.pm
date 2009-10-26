@@ -3,7 +3,8 @@ package Norris::Web::Model::TheSchwartz;
 use strict;
 use warnings;
 use parent 'Catalyst::Model';
-use TheSchwartz;
+use lib '../../../../lib/';
+use Norris::TheSchwartzWrapper;
 
 =head1 NAME
 
@@ -11,7 +12,13 @@ Norris::Web::Model::TheSchwartz - Catalyst Model
 
 =head1 DESCRIPTION
 
-A wrapper for using TheSchwartz from within our Models.
+Provides access to TheSchwartzWrapper which in turn provides access to a
+TheSchwartz object for handling the job queue.
+
+By using the COMPONENT attribute it makes this model a wrapper, for a wrapper,
+allowing things like $c->Model('TheSchwartz')->insert(...).
+
+In other words, it opens up TheSchwartz's API to our controllers.
 
 =head1 AUTHOR
 
@@ -25,14 +32,7 @@ it under the same terms as Perl itself.
 =cut
 
 sub COMPONENT {
-    return TheSchwartz->new(
-                databases => [ {
-                                dsn => 'dbi:mysql:norris_jobs',
-                                user => 'root',
-                                pass => ''
-                            } ],
-                                verbose => 1,
-            );
+    return Norris::TheSchwartzWrapper->new();
 }
 
 1;
