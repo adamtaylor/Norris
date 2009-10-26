@@ -57,8 +57,10 @@ sub scan :Local {
     my ( $self, $c ) = @_;
     my $url = $c->req->body_params->{url};
     
+    ## todo move code into resuable helper
     my $u = URI->new($url);
     $u = $u->canonical;
+    ## end todo
     
     my $url_str = $u->as_string;
     
