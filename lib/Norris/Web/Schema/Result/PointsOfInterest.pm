@@ -29,4 +29,6 @@ __PACKAGE__->has_many(
     { "foreign.point_of_interest_id" => "self.id" },
 );
 
+__PACKAGE__->many_to_many('vulnerabilities','point_of_interest_vulnerabilities','vulnerability');
+
 1;
