@@ -19,6 +19,16 @@ __PACKAGE__->set_primary_key("website_id", "point_of_interest_id");
 # Created by DBIx::Class::Schema::Loader v0.04006 @ 2009-11-19 13:46:48
 # DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:iBiEYzn35Yxz6BWYvhKOoQ
 
+__PACKAGE__->belongs_to(
+    "website_id",
+    "Norris::Web::Schema::Result::Websites",
+    { "id" => "website_id" }
+);
 
-# You can replace this text with custom content, and it will be preserved on regeneration
+__PACKAGE__->belongs_to(
+    "point_of_interest",
+    "Norris::Web::Schema::Result::PointsOfInterest",
+    { "foreign.id" => "point_of_interest_id" }
+);
+
 1;
