@@ -31,11 +31,10 @@ __PACKAGE__->set_primary_key("id");
 # Created by DBIx::Class::Schema::Loader v0.04006 @ 2009-11-19 13:46:48
 # DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:FvpOxS5cYjU6WE2/zxqwrg
 __PACKAGE__->has_many(
-    "points_of_interest",    
+    "website_point_of_interest",    
     "Norris::Web::Schema::Result::PointsOfInterest",
     { "foreign.website_id" => "self.id" },
 );
 
-
-
+__PACKAGE__->many_to_many('points_of_interest', 'website_point_of_interest', 'point_of_interest');
 1;
