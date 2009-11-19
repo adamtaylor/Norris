@@ -23,7 +23,10 @@ __PACKAGE__->set_primary_key("id");
 
 # Created by DBIx::Class::Schema::Loader v0.04006 @ 2009-11-19 13:46:48
 # DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:h/Of4XhISYBmg2ICusBCcg
+__PACKAGE__->has_many(
+    "point_of_interest_vulnerabilities",
+    "Norris::Web::Schema::Result::PointOfInterestVulnerability",
+    { "foreign.point_of_interest_id" => "self.id" },
+);
 
-
-# You can replace this text with custom content, and it will be preserved on regeneration
 1;
