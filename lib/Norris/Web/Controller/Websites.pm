@@ -58,8 +58,25 @@ View a list of all the websites stored in the application.
 sub index : Chained('base'): PathPart('index'): Args(0) {
     my ($self, $c) = @_;
     
+    return;
+}
+
+=head2 delete
+
+Delete a given website.
+
+=cut
+
+sub delete : Chained('base'): PathPart('delete'): Args(1) {
+    my ($self, $c, $id) = @_;
+        
+    my $website_rs = $c->model('DB::Websites')->search( id => $id );
+    $website_rs->delete();
     
-    return
+    $c->redirect('/websites/index/');
+    
+    return;
+    
 }
 
 =head1 AUTHOR
