@@ -17,7 +17,8 @@ use parent qw/Catalyst/;
 use Catalyst qw/-Debug
                 ConfigLoader
                 Static::Simple
-                Unicode/;
+                Unicode
+                Redirect/;
 our $VERSION = '0.01';
 
 # Configure the application.
