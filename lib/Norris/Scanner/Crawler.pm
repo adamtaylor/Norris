@@ -27,6 +27,7 @@ sub work {
     my $base_url        = $args->{'base_url'};
     my $processing_url  = $args->{'process'};
     my $urls_seen_ref   = $args->{'urls_seen'};
+    my $id              = $args->{'id'};
     
     my @queue = ();
     
@@ -36,10 +37,11 @@ sub work {
                         urls_seen => $urls_seen_ref,
                     };
     
-    print STDERR Dumper $job_args;
-    
+    #print STDERR Dumper $job_args;
     
     unshift(@queue, $job_args);
+    
+    my $forms_seen_ref;
     
     while ( @queue >= 1 ) {
     
@@ -64,18 +66,32 @@ sub work {
             
                 my $links = $mech->find_all_links( url_regex => qr/^$base_url.*/i);
                 
-                #my $forms = $mech->forms();
-                #
-                #if ( defined($forms) ) {
-                #    foreach my $form (@{$forms}) {
-                #        print STDERR "form action = ". $form->action() ."\n";
-                #        my $job_args = {
-                #            url => $processing_url,
-                #            form => $form
-                #        };
-                #        #$client->insert( 'Norris::Scanner::Attacker', $job_args );
-                #    }
-                #}
+                ## find all the [unique] forms and add to the job queue 
+                my $forms = $mech->forms();
+                
+                if ( defined($forms) ) {
+                   foreach my $form (@{$forms}) {
+                       
+                       if ( $forms_seen_ref->{ $form->action() }++ ) {
+                           print STDERR "--- skipping form ---\n";
+                       } else {
+                           $forms_seen_ref->{ $form->action() } = 1;
+                           
+                           print STDERR "form action = ". $form->action() ."\n";
+                           
+                           my $job_args = {
+                                  url => $processing_url,
+                                  form => $form,
+                                  id => $id,
+                              };
+                              $client->insert( 'Norris::Scanner::Attacker', $job_args );
+                       }
+                       
+                       ##print STDERR Dumper $forms_seen_ref;
+                       
+                       
+                   }
+                }
                 
                 #print STDERR Dumper \$links;
                 
@@ -94,7 +110,7 @@ sub work {
                             process => $url
                         };
                         
-                        print STDERR Dumper $job_args;
+                        #print STDERR Dumper $job_args;
                         
                         unshift(@queue,$job_args);
                         
@@ -121,8 +137,5 @@ sub _clean_url {
     
     return $u->as_string;
 }
-
-
-1;
 
 1;

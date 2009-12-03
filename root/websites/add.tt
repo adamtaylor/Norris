@@ -1,24 +1,17 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-    "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-<head>
-    <meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
-    <title>Add A Website</title>
-</head>
+[% WRAPPER page.tt title = c.config.name ; END %]
 
-<body>
-    <form action="[% c.uri_for(c.controller('Websites').action_for('add')) %]" method="post" accept-charset="utf-8">
-        <p>websites rs = [% websites_rs %]</p>
-        [% FOREACH col = websites_rs.result_source.columns %]
-            [% IF col != "id" %]
-            <div>
-                <label for="[% col %]">[% col %]
-                    <input type="text" name="[% col %]" value="" />
-                </label>
-            </div>
-            [% END %]
+<h3>Add Website</h3>
+
+<form action="[% c.uri_for(c.controller('Websites').action_for('add')) %]" method="post" accept-charset="utf-8">
+    <p>websites rs = [% websites_rs %]</p>
+    [% FOREACH col = websites_rs.result_source.columns %]
+        [% IF col != "id" %]
+        <div>
+            <label for="[% col %]">[% col %]
+                <input type="text" name="[% col %]" value="" />
+            </label>
+        </div>
         [% END %]
-        <p><input type="submit" value="Create &rarr;"/></p>
-    </form>
-</body>
-</html>
+    [% END %]
+    <p><input type="submit" value="Create &rarr;"/></p>
+</form>

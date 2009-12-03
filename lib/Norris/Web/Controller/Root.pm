@@ -54,19 +54,20 @@ Handle the form submission on the index page.
 =cut
 
 sub scan :Local {
+#sub scan : Chained('/'): PathPart('scan'): Args('1') {
     my ( $self, $c ) = @_;
+    
     my $url = $c->req->body_params->{url};
     
-    ## todo move code into resuable helper
-    my $u = URI->new($url);
-    $u = $u->canonical;
-    ## end todo
+    my $u = $self->_clean_url( $url );
     
     my $url_str = $u->as_string;
     
     my $job_args = { base_url => $url_str,
-                        urls_seen => {},
-                        process => $url_str };
+                    urls_seen => {},
+                    process => $url_str,
+                    id => '0',
+    };
         
     $c->model('TheSchwartz')->insert( 'Norris::Scanner::Crawler', $job_args );
     $c->stash(
@@ -76,6 +77,48 @@ sub scan :Local {
     )
 }
 
+=head2 scan_website
+
+Take a given website ID and peform a scan.
+
+=cut
+
+sub scan_website : Chained('/'): PathPart('scan'): Args('1') {
+    my ( $self, $c, $id ) = @_;
+        
+    my $website = $c->model('DB::Websites')->find( $id );
+    
+    my $job_args = { base_url => $website->url(),
+                    urls_seen => {},
+                    process => $website->url(),
+                    id => $website->id(),
+    };
+    
+    $c->model('TheSchwartz')->insert( 'Norris::Scanner::Crawler', $job_args );
+    $c->stash(
+        url => $website->url(),
+        result => $website->url(),
+        template => 'index.tt',
+    )
+
+}
+
+=head2 _clean_url
+
+Take a URL and return a "cleaned" URI object
+
+=cut
+
+sub _clean_url {
+    my ( $self, $url ) = @_;
+   
+    my $u = URI->new($url);
+    $u = $u->canonical;
+    
+    return $u;
+}
+
+
 =head2 end
 
 Attempt to render a view, if needed.
@@ -84,12 +127,12 @@ Attempt to render a view, if needed.
 
 sub end : ActionClass('RenderView') {
     my ( $self, $c ) = @_;
-    my $errors = scalar @{$c->error};
-    if ( $errors ) {
-        $c->res->status(500);
-        $c->res->body('internal server error');
-        $c->clear_errors;
-    }
+    # my $errors = scalar @{$c->error};
+    #     if ( $errors ) {
+    #         $c->res->status(500);
+    #         $c->res->body('internal server error');
+    #         $c->clear_errors;
+    #     }
 }
 
 =head1 AUTHOR
