@@ -38,4 +38,4 @@ CREATE TABLE website_vulnerabilites (
     website_id INT(11),
     vulnerability_id INT(11),
     PRIMARY KEY (website_id, vulnerability_id)
-)
+);

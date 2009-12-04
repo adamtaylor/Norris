@@ -42,7 +42,7 @@ sub try_xss_attacks {
     
     my @xss_attack_vectors = (
       
-        "<script>alert('XSS')</script>",
+        '<script>alert("XSS")</script>',
         "'';!--\"<XSS>=&{()}\"",
         
     );
@@ -52,6 +52,7 @@ sub try_xss_attacks {
     foreach my $form_input (@form_inputs) {
         #print STDERR $form_input->name() .'\n';
         $form->value( $form_input->name(), $xss_attack_vectors[0] );
+        print STDERR $form->value( $form_input->name() ) . "\n";
     }
     
     my $request = $form->click();
@@ -65,7 +66,13 @@ sub try_xss_attacks {
         print STDERR "request was successful\n";
                 
         print STDERR Dumper $mech->response->code();
-        print STDERR Dumper $mech->content();
+        #print STDERR Dumper $mech->content();
+        
+        if ( $mech->content() =~ m/<script>alert\("XSS"\)<\/script>/gm ) {
+            print STDERR "--- XSS VULNERABILITY FOUND ---\n";
+        } else {
+            print STDERR "--- NO XSS FOUND ---\n";
+        }
         
     }
     
