@@ -1,0 +1,25 @@
+[% WRAPPER page.tt title = c.config.name ; END %]
+
+<h3>Website Report</h3>
+
+[% FOREACH website = websites_rs.find(id) %]
+
+    <div>
+        <p>Name: [% website.name %]</p>
+        <p>URL = [% website.url %]</p>
+        <p>Points of Interest:</p>
+        [% FOREACH point = website.points_of_interest %]
+            <ul>
+                <li>[% point.url %]</li>
+                <p>Vulnerabilities:</p>
+                [% FOREACH vuln = point.vulnerabilities %]
+                    [% USE HTML %]
+                    <ul>
+                        <li>[% vuln.type %]</li>
+                        <li>[% HTML.escape(vuln.input) %]</li>
+                    </ul>
+                [% END %]
+            </ul>
+        [% END %]
+    </div>
+[% END %]
