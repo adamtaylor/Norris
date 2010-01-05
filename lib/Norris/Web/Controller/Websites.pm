@@ -69,14 +69,37 @@ Delete a given website.
 
 sub delete : Chained('base'): PathPart('delete'): Args(1) {
     my ($self, $c, $id) = @_;
-        
-    my $website_rs = $c->model('DB::Websites')->search( id => $id );
-    $website_rs->delete();
+    
+    my $websites_rs = $c->stash->{websites_rs};
+    
+    my $website = $websites_rs->search( id => $id );
+    $website->delete();
     
     $c->redirect('/websites/index/');
     
     return;
     
+}
+
+=head2 report
+
+View a given website's vulnerability report.
+
+=cut
+
+sub report : Chained('base'): PathPart('report'): Args(1) {
+    my ($self, $c, $id) = @_;
+    
+    my $websites_rs = $c->stash->{websites_rs};
+    
+    my $website = $websites_rs->search( id => $id );    
+    
+    #die Dumper $website;
+    
+    $c->stash( website_rs => $website );
+    $c->stash( id => $id );
+    
+    return;
 }
 
 =head1 AUTHOR

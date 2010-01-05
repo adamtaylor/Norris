@@ -24,11 +24,20 @@ __PACKAGE__->set_primary_key("id");
 # Created by DBIx::Class::Schema::Loader v0.04006 @ 2009-11-19 13:46:48
 # DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:h/Of4XhISYBmg2ICusBCcg
 __PACKAGE__->has_many(
-    "point_of_interest_vulnerabilities",
+    "point_of_interest_vulnerability",
     "Norris::Web::Schema::Result::PointOfInterestVulnerability",
     { "foreign.point_of_interest_id" => "self.id" },
 );
 
-__PACKAGE__->many_to_many('vulnerabilities','point_of_interest_vulnerabilities','vulnerability');
+__PACKAGE__->many_to_many('vulnerabilities','point_of_interest_vulnerability','vulnerability');
+
+__PACKAGE__->has_many(
+    "website_point_of_interest",    
+    "Norris::Web::Schema::Result::WebsitePointOfInterest",
+    { "foreign.point_of_interest_id" => "self.id" },
+);
+
+__PACKAGE__->many_to_many('websites', 'website_point_of_interest', 'website');
+
 
 1;

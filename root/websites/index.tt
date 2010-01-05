@@ -15,6 +15,7 @@
             </label>
             <br />
             <a href="[% c.uri_for(c.controller('Root').action_for('scan_website'), website.id ) %]">Scan</a>
+            <a href="[% c.uri_for(c.controller('Websites').action_for('report'), website.id ) %]">Report</a>
             <a href="[% c.uri_for(c.controller('Websites').action_for('delete'), website.id ) %]">Delete</a>
         </p>
     </div>

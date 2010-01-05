@@ -32,7 +32,7 @@ __PACKAGE__->set_primary_key("id");
 # DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:FvpOxS5cYjU6WE2/zxqwrg
 __PACKAGE__->has_many(
     "website_point_of_interest",    
-    "Norris::Web::Schema::Result::PointsOfInterest",
+    "Norris::Web::Schema::Result::WebsitePointOfInterest",
     { "foreign.website_id" => "self.id" },
 );
 

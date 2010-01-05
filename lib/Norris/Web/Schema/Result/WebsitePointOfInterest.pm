@@ -20,15 +20,15 @@ __PACKAGE__->set_primary_key("website_id", "point_of_interest_id");
 # DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:iBiEYzn35Yxz6BWYvhKOoQ
 
 __PACKAGE__->belongs_to(
-    "website_id",
+    "website",
     "Norris::Web::Schema::Result::Websites",
-    { "id" => "website_id" }
+    { "foreign.id" => "self.website_id" }
 );
 
 __PACKAGE__->belongs_to(
     "point_of_interest",
     "Norris::Web::Schema::Result::PointsOfInterest",
-    { "foreign.id" => "point_of_interest_id" }
+    { "foreign.id" => "self.point_of_interest_id" }
 );
 
 1;
