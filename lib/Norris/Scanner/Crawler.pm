@@ -55,16 +55,25 @@ sub work {
         
         if ( $mech->success() ) {
             #print STDERR "grabbed the URL successfully, about to find_all_links\n";
+            my $client = Norris::TheSchwartzWrapper->new();
             
             ## URI query ?foo=bar - used for Directory Traversal attacks
             my $uri = $mech->uri();
-            if ($uri->query) { print STDERR $uri->query . "\n"; }
+            if ($uri->query) { 
+                
+                print STDERR $uri . $uri->query . "\n"; 
+            
+                my $job_args = {
+                          url => $processing_url,
+                          uri => $uri,
+                          id => $id,
+                };
+                $client->insert( 'Norris::Scanner::Attacker', $job_args );
+            }
             
             my $response = $mech->response();
                     
             if ( $response->header( 'Content-Type' ) =~ /text\/html/ ) {
-                
-                my $client = Norris::TheSchwartzWrapper->new();
             
                 $urls_seen_ref->{ $processing_url } = 1;
             
@@ -87,8 +96,8 @@ sub work {
                                   url => $processing_url,
                                   form => $form,
                                   id => $id,
-                              };
-                              $client->insert( 'Norris::Scanner::Attacker', $job_args );
+                           };
+                           $client->insert( 'Norris::Scanner::Attacker', $job_args );
                        }
                        
                        ##print STDERR Dumper $forms_seen_ref;
