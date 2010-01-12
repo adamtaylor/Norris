@@ -56,6 +56,10 @@ sub work {
         if ( $mech->success() ) {
             #print STDERR "grabbed the URL successfully, about to find_all_links\n";
             
+            ## URI query ?foo=bar - used for Directory Traversal attacks
+            my $uri = $mech->uri();
+            if ($uri->query) { print STDERR $uri->query . "\n"; }
+            
             my $response = $mech->response();
                     
             if ( $response->header( 'Content-Type' ) =~ /text\/html/ ) {
