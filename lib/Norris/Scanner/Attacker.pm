@@ -37,8 +37,8 @@ sub work {
     }
     elsif ($form) { 
         $point_id = _insert_point_of_interest( $website_id, $form ); 
-        #_try_xss_attacks( $point_id, $url, $form, $mech );
-        #_try_sql_injection_attacks( $point_id, $url, $form, $mech );
+        _try_xss_attacks( $point_id, $url, $form, $mech );
+        _try_sql_injection_attacks( $point_id, $url, $form, $mech );
     }
     
     $job->completed();
@@ -137,7 +137,7 @@ sub _try_sql_injection_attacks {
             
         #print STDERR Dumper $mech->response->code();
         
-        #print STDERR $mech->content();
+        print STDERR $mech->content();
         
         
         if ( $mech->content() =~ m/SQL/gi && $mech->content() =~ m/error/gi ) {
