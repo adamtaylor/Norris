@@ -21,11 +21,21 @@ sub work {
     
     my $url         = $args->{'url'};
     my $form        = $args->{'form'};
+    my $uri         = $args->{'uri'};
     my $website_id  = $args->{'id'};
     
-    my $point_id = _insert_point_of_interest( $website_id, $form );
-    _try_xss_attacks( $point_id, $url, $form, $mech );
-    #_try_sql_injection_attacks( $website_id, $form );
+   
+    my $point_id;
+    
+    if ($uri) { 
+        $point_id = _insert_point_of_interest( $website_id, $uri ); 
+        _try_dir_traversal_attack( $point_id, $url, $uri, $mech );
+    }
+    elsif ($form) { 
+        $point_id = _insert_point_of_interest( $website_id, $form ); 
+        _try_xss_attacks( $point_id, $url, $form, $mech );
+        _try_sql_injection_attacks( $point_id, $url, $form, $mech );
+    }
     
     $job->completed();
 }
@@ -53,7 +63,7 @@ sub _try_xss_attacks {
         
         q[<script>alert("XSS")</script>] => q[<script>alert\("XSS"\)<\/script>],
         q[';alert(String.fromCharCode(88,83,83))//\';alert(String.fromCharCode(88,83,83))//";alert(String.fromCharCode(88,83,83))//\";alert(String.fromCharCode(88,83,83))//--></SCRIPT>">'><SCRIPT>alert(String.fromCharCode(88,83,83))</SCRIPT>] => q[';alert\(String\.fromCharCode\(88,83,83\)\)\/\/\\';alert\(String\.fromCharCode\(88,83,83\)\)\/\/\";alert\(String\.fromCharCode\(88,83,83\)\)\/\/\\";alert\(String\.fromCharCode\(88,83,83\)\)\/\/--><\/SCRIPT>\">\'><SCRIPT>alert\(String\.fromCharCode\(88,83,83\)\)<\/SCRIPT>],
-        q[3,83))//\";alert(String.fromCharCode(88,83,83))//--></SCRIPT>">'><SCRIPT>alert(String.fromCharCode(88,83,83))</SCRIPT>] => q[3,83\)\)\/\/\\";alert(String\.fromCharCode\(88,83,83\)\)\/\/--><\/SCRIPT>\">\'><SCRIPT>alert\(String\.fromCharCode\(88,83,83\)\)<\/SCRIPT>]
+        q[3,83))//\";alert(String.fromCharCode(88,83,83))//--></SCRIPT>">'><SCRIPT>alert(String.fromCharCode(88,83,83))</SCRIPT>] => q[3,83\)\)\/\/\\";alert\(String\.fromCharCode\(88,83,83\)\)\/\/--><\/SCRIPT>\">\'><SCRIPT>alert\(String\.fromCharCode\(88,83,83\)\)<\/SCRIPT>]
     );
     
     my @form_inputs = $form->inputs();
@@ -79,8 +89,6 @@ sub _try_xss_attacks {
             print STDERR Dumper $mech->response->code();
             #print STDERR Dumper $mech->content();
         
-            #if ( $mech->content() =~ m/<script>alert\("XSS"\)<\/script>/gm ) {
-            #if ( $mech->content() =~ m/\';alert\(String\.fromCharCode\(88,83,83\)\)\/\/\\';alert\(String\.fromCharCode\(88,83,83\)\)\/\/\";alert\(String\.fromCharCode\(88,83,83\)\)\/\/\\";alert\(String\.fromCharCode\(88,83,83\)\)\/\/--><\/SCRIPT>\">\'><SCRIPT>alert\(String\.fromCharCode\(88,83,83\)\)<\/SCRIPT>/gm ) {
             if ( $mech->content() =~ m/$value/gm ) {
                 print STDERR "--- XSS VULNERABILITY FOUND ---\n";
                 _insert_vulnerability( $point_id, 'XSS', $value );
@@ -94,8 +102,41 @@ sub _try_xss_attacks {
 }
 
 sub _try_sql_injection_attacks {
-    my ($website_id, $form) = @_;
+    my ($point_id, $url, $form, $mech) = @_;
+
+    my $vector = "'";
+
+    my @form_inputs = $form->inputs();
     
+    foreach my $form_input (@form_inputs) {
+        $form->value( $form_input->name(), $vector );
+        print STDERR '$form->value( $form_input->name() ) == '. $form->value( $form_input->name() ) . "\n";
+    }
+    
+    print STDERR Dumper $form;
+    
+    my $request = $form->click();
+    
+    eval { $mech->request( $request ) };
+    
+    if ( $mech->success() ) {
+        print STDERR "request was successful\n";
+            
+        print STDERR Dumper $mech->response->code();
+        
+        print STDERR $mech->content();
+        
+        
+        if ( $mech->content() =~ m/SQL/gi && $mech->content() =~ m/error/gi ) {
+            print STDERR "--- SQLi VULNERABILITY FOUND -> Point ID = $point_id ---\n";
+            
+            #print STDERR $mech->content();
+            
+            _insert_vulnerability( $point_id, 'SQLi', $vector );
+        } else {
+            print STDERR "--- NO SQLi FOUND ---\n";
+        }
+    }
 }
 
 sub _insert_vulnerability {
