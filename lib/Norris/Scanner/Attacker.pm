@@ -20,12 +20,16 @@ sub work {
     my $mech = WWW::Mechanize->new();
     
     my $url         = $args->{'url'};
-    my $form        = $args->{'form'};
-    my $uri         = $args->{'uri'};
+    # my $form        = $args->{'form'};
+    # my $uri         = $args->{'uri'};
+    my ($form, $uri);
+    if ($args->{'form'}) { $form = $args->{'form'}; $uri = undef; }
+    if ($args->{'uri'}) { $uri = $args->{'uri'}; $form = undef; }
     my $website_id  = $args->{'id'};
     
-   
     my $point_id;
+    
+    print STDERR "\$uri == $uri -- \$form == $form\n";
     
     if ($uri) { 
         $point_id = _insert_point_of_interest( $website_id, $uri ); 
@@ -41,11 +45,20 @@ sub work {
 }
 
 sub _insert_point_of_interest {
-    my ($website_id, $form) = @_;
+    my ($website_id, $object) = @_;
     
     my $schema = Norris::Web::Model::DB->new();
+    
+    my $url;
+    if ( ref($object) =~ m/HTML::Form/ ) {
+        $url = $object->action();
+    } 
+    else {
+        $url = $object;
+    }
+    
     my $point_of_interest = $schema->resultset('PointsOfInterest')->create({
-        'url' => $form->action(),
+        'url' => $url,
     });
     
     my $point_id = $point_of_interest->id();
@@ -73,7 +86,7 @@ sub _try_xss_attacks {
         foreach my $form_input (@form_inputs) {
             #print STDERR $form_input->name() .'\n';
             $form->value( $form_input->name(), $key );
-            print STDERR $form->value( $form_input->name() ) . "\n";
+            #print STDERR $form->value( $form_input->name() ) . "\n";
         }
     
         my $request = $form->click();
@@ -84,9 +97,9 @@ sub _try_xss_attacks {
     
         if ( $mech->success() ) {
         
-            print STDERR "request was successful\n";
+            #print STDERR "request was successful\n";
                 
-            print STDERR Dumper $mech->response->code();
+            #print STDERR Dumper $mech->response->code();
             #print STDERR Dumper $mech->content();
         
             if ( $mech->content() =~ m/$value/gm ) {
@@ -110,21 +123,21 @@ sub _try_sql_injection_attacks {
     
     foreach my $form_input (@form_inputs) {
         $form->value( $form_input->name(), $vector );
-        print STDERR '$form->value( $form_input->name() ) == '. $form->value( $form_input->name() ) . "\n";
+        #print STDERR '$form->value( $form_input->name() ) == '. $form->value( $form_input->name() ) . "\n";
     }
     
-    print STDERR Dumper $form;
+    #print STDERR Dumper $form;
     
     my $request = $form->click();
     
     eval { $mech->request( $request ) };
     
     if ( $mech->success() ) {
-        print STDERR "request was successful\n";
+        #print STDERR "request was successful\n";
             
-        print STDERR Dumper $mech->response->code();
+        #print STDERR Dumper $mech->response->code();
         
-        print STDERR $mech->content();
+        #print STDERR $mech->content();
         
         
         if ( $mech->content() =~ m/SQL/gi && $mech->content() =~ m/error/gi ) {
@@ -136,6 +149,18 @@ sub _try_sql_injection_attacks {
         } else {
             print STDERR "--- NO SQLi FOUND ---\n";
         }
+    }
+}
+
+sub _try_dir_traversal_attack {
+    my ($point_id, $url, $uri, $mech) = @_;
+    
+    print STDERR Dumper $uri;
+    
+    my $request;
+    for(1..15) {
+        $request = '../'*$1 . 'etc/passwd';
+        print STDERR $request . "\n";
     }
 }
 
