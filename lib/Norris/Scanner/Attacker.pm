@@ -140,7 +140,7 @@ sub _try_sql_injection_attacks {
         print STDERR $mech->content();
         
         
-        if ( $mech->content() =~ m/SQL/gi && $mech->content() =~ m/error/gi ) {
+        if ( ($mech->content() =~ m/SQL/gi && $mech->content() =~ m/error/gi) || $mech->status() =~ m/5../gi ) {
             print STDERR "--- SQLi VULNERABILITY FOUND -> Point ID = $point_id ---\n";
             
             #print STDERR $mech->content();
