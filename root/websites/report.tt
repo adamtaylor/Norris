@@ -4,9 +4,15 @@
 
 [% FOREACH website = websites_rs.find(id) %]
 
-    <div>
+    <div id="summary">
         <p>Name: [% website.name %]</p>
         <p>URL = [% website.url %]</p>
+    </div>
+    
+    <div id="reports">
+    </div>
+    
+    <div id="detail">
         <p>Points of Interest:</p>
         [% FOREACH point = website.points_of_interest %]
             <ul>
@@ -23,3 +29,73 @@
         [% END %]
     </div>
 [% END %]
+
+ <script type="text/javascript">
+ 		$(document).ready(function() {
+ 			var chart = new Highcharts.Chart({
+ 				chart: {
+ 					renderTo: 'reports',
+ 					margin: [50, 200, 60, 170]
+ 				},
+ 				title: {
+ 					text: 'Types of Vulnerability Found'
+ 				},
+ 				plotArea: {
+ 					shadow: null,
+ 					borderWidth: null,
+ 					backgroundColor: null
+ 				},
+ 				tooltip: {
+ 					formatter: function() {
+ 						return '<b>'+ this.point.name +'</b>: '+ this.y +' %';
+ 					}
+ 				},
+ 				plotOptions: {
+ 					pie: {
+ 						dataLabels: {
+ 							enabled: true,
+ 							formatter: function() {
+ 								if (this.y > 5) return this.point.name;
+ 							},
+ 							color: 'white',
+ 							style: {
+ 								font: '13px Helvetica, Arial, Verdana, sans-serif'
+ 							}
+ 						}
+ 					}
+ 				},
+ 				legend: {
+ 					layout: 'vertical',
+ 					style: {
+ 						left: 'auto',
+ 						bottom: 'auto',
+ 						right: '50px',
+ 						top: '100px'
+ 					}
+ 				},
+ 			        series: [{
+ 					type: 'pie',
+ 					name: 'Vulnerabilities',
+ 					data: [{
+ 							name: 'XSS',
+ 							y: 44.2,
+ 							sliced: false
+ 						},
+ 						{
+ 							name: 'SQLi',
+ 							y: 20,
+ 							sliced: true
+ 						},
+ 						{
+ 							name: 'Traversal',
+ 							y: 2.7,
+ 							sliced: false
+ 						},
+ 					]
+ 				}]
+ 			});
+
+
+ 		});
+ 		</script>
+    
