@@ -99,6 +99,24 @@ sub report : Chained('base'): PathPart('report'): Args(1) {
     $c->stash( website_rs => $website );
     $c->stash( id => $id );
     
+    ## count for pie chart
+    my %count = ();
+    my $total;
+    foreach my $point ($website->find($id)->points_of_interest() ) {
+        foreach my $vuln ($point->vulnerabilities) {
+            $count{$vuln->type}++;
+            print STDERR Dumper $vuln->type . ' ' . $count{$vuln->type} ."\n";
+            $total++;
+        }
+    }
+
+    while ( my ($type, $type_count) = each(%count) ) {
+            $count{$type} = ( $count{$type} / $total ) * 100;
+    }
+   
+   
+    $c->stash( count => \%count );
+    
     return;
 }
 
