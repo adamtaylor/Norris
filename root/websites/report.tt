@@ -78,17 +78,17 @@
  					name: 'Vulnerabilities',
  					data: [{
  							name: 'XSS',
- 							y: 44.2,
+ 							y: [% count.XSS || 0 %],
  							sliced: false
  						},
  						{
  							name: 'SQLi',
- 							y: 20,
+ 							y: [% count.SQLi || 0 %],
  							sliced: true
  						},
  						{
  							name: 'Traversal',
- 							y: 2.7,
+ 							y: [% count.Directory_Traversal || 0 %],
  							sliced: false
  						},
  					]
