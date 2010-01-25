@@ -76,8 +76,9 @@ sub work {
             if ( $response->header( 'Content-Type' ) =~ /text\/html/ ) {
             
                 $urls_seen_ref->{ $processing_url } = 1;
-            
-                my $links = $mech->find_all_links( url_regex => qr/^$base_url.*/i);
+                
+                ## find all the links on the page with the same $base_url or relative links
+                my $links = $mech->find_all_links( url_regex => qr/(^$base_url.*)|^(\/.*)/i);
                 
                 ## find all the [unique] forms and add to the job queue 
                 my $forms = $mech->forms();
