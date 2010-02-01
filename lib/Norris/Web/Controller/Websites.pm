@@ -114,7 +114,6 @@ sub report : Chained('base'): PathPart('report'): Args(1) {
             $count{$type} = ( $count{$type} / $total ) * 100;
     }
    
-   
     $c->stash( count => \%count );
     
     return;
