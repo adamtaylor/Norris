@@ -174,7 +174,7 @@ sub _try_dir_traversal_attack {
             print STDERR "page request successful \n";
             if ( $mech->content() =~ m/root/gi ) {
                 print STDERR "--- Directory Traversal Vulnerability Found ---\n";
-                _insert_vulnerability( $point_id, 'Directory Traversal', $uri->as_string );
+                _insert_vulnerability( $point_id, 'Directory_Traversal', $uri->as_string );
                 last;
             }
         }   
