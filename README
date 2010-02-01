@@ -4,5 +4,4 @@ Run script/TheSchwartz_attacker_worker.pl to start the attacking component.
 
 Run script/TheSchwartz_crawler_worker.pl to start the crawling component.
 
-
-
+Visit http://localhost:3000 to view the application and /websites/index/ or /websites/add/ to perform scans or add new sites.
