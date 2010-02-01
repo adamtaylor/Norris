@@ -1,1 +1,8 @@
-Run script/norris_web_server.pl to test the application.
+Run script/norris_web_server.pl to start the web GUI.
+
+Run script/TheSchwartz_attacker_worker.pl to start the attacking component.
+
+Run script/TheSchwartz_crawler_worker.pl to start the crawling component.
+
+
+
