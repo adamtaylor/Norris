@@ -20,10 +20,10 @@
     
     <div>
         <ul>
-            <li><a href="#">home</a></li>
-            <li><a href="#">sign up</a></li>
-            <li><a href="#">log in</a></li>
-            <li><a href="#">features</a></li>
+            <a href="/websites/index">Home</a>
+        </ul>
+        <ul>
+            <a href="[% c.uri_for(c.controller('Websites').action_for('add') ) %]">Add Site</a>
         </ul>
     </div>
 

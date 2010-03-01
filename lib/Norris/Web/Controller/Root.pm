@@ -33,6 +33,8 @@ Display the default template index.tt.
 
 sub index :Path :Args(0) {
     my ( $self, $c ) = @_;
+    
+    $c->redirect('/websites/index/');
 }
 
 =head2 default

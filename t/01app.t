@@ -40,7 +40,8 @@ $response = undef;
 $request = GET('http://localhost:3000/scan/10');
 $response = request($request);
 ok( $response->is_success, '/scan request successful 2xx');
-like( $response->content, qr/URL has been added to the scanning Job Queue http:\/\/prd.furness.tamar.co.uk\//, 'Contains the words URL has been added to scanning Job Queue...');
+like( $response->content, qr/URL has been added to the scanning Job Queue http:\/\/prd.furness.tamar.co.uk\//, 
+    'Contains the words URL has been added to scanning Job Queue...');
 $response = undef;
 
 ## test request for results

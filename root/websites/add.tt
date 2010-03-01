@@ -6,11 +6,11 @@
     <p>websites rs = [% websites_rs %]</p>
     [% FOREACH col = websites_rs.result_source.columns %]
         [% IF col != "id" %]
-        <div>
+        <p>
             <label for="[% col %]">[% col %]
                 <input type="text" name="[% col %]" value="" />
             </label>
-        </div>
+        </p>
         [% END %]
     [% END %]
     <p><input type="submit" value="Create &rarr;"/></p>

@@ -102,12 +102,18 @@ sub report : Chained('base'): PathPart('report'): Args(1) {
     ## count for pie chart
     my %count = ();
     my $total;
+    
+    my $points;
+    my $vulns;
+    
     foreach my $point ($website->find($id)->points_of_interest() ) {
         foreach my $vuln ($point->vulnerabilities) {
             $count{$vuln->type}++;
-            print STDERR Dumper $vuln->type . ' ' . $count{$vuln->type} ."\n";
+            #print STDERR Dumper $vuln->type . ' ' . $count{$vuln->type} ."\n";
             $total++;
+            $vulns++;
         }
+        $points++;
     }
 
     while ( my ($type, $type_count) = each(%count) ) {
@@ -115,6 +121,8 @@ sub report : Chained('base'): PathPart('report'): Args(1) {
     }
    
     $c->stash( count => \%count );
+    $c->stash( points => $points );
+    $c->stash( vulns => $vulns );
     
     return;
 }

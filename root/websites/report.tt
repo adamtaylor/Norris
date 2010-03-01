@@ -9,6 +9,11 @@
         <p>URL = [% website.url %]</p>
     </div>
     
+    <div>
+        <p>Total Points of Interest = [% points %]</p>
+        <p>Total Vulnerabilities = [% vulns %]</p>
+    </div>
+    
     <div id="reports">
     </div>
     

@@ -14,13 +14,20 @@ sub work {
     my $class = shift;
     my TheSchwartz::Job $job = shift;
     
+    ## timestamp start
+    my ($sec,$min,$hour,$mday,$mon,$year,$wday,
+    $yday,$isdst)=localtime(time);
+    printf "%4d-%02d-%02d %02d:%02d:%02d\n",
+    $year+1900,$mon+1,$mday,$hour,$min,$sec;
+    
+    
     my $args = $job->arg();
     
     #print STDERR "base_url = ". $args->{'base_url'}."\n";
     #   print STDERR "--- process = ". $args->{'process'}." ---\n";
     #print STDERR "urls_seen = ". $args->{'urls_seen'}."\n";
 
-    print STDERR Dumper $args;
+    #print STDERR Dumper $args;
 
     my $mech = WWW::Mechanize->new();
     
@@ -59,9 +66,9 @@ sub work {
             
             ## URI query ?foo=bar - used for Directory Traversal attacks
             my $uri = $mech->uri();
-            if ($uri->query) { 
+            if ($uri->query  && $uri->query !~ m/replytocom/) { 
                 
-                print STDERR $uri . $uri->query . "\n"; 
+                #print STDERR $uri . $uri->query . "\n"; 
             
                 my $job_args = {
                           url => $processing_url,
@@ -77,8 +84,13 @@ sub work {
             
                 $urls_seen_ref->{ $processing_url } = 1;
                 
-                ## find all the links on the page with the same $base_url or relative links
-                my $links = $mech->find_all_links( url_regex => qr/(^$base_url.*)|^(\/.*)/i);
+                ## find all the links on the page with the same $base_url or [ TODO FIX THIS] relative links
+                #my $links = $mech->find_all_links( url_regex => qr/(^$base_url)|(^((?!http:\/\/).*))/i);
+                my $links = $mech->find_all_links( url_abs_regex => qr/(^$base_url.*)/i);
+                #my $links = $mech->find_all_links();
+                #die Dumper $response->header(":refresh" => 1)->as_string();
+                #die Dumper $h->as_string();
+                #my $links = $mech->find_all_links( );
                 
                 ## find all the [unique] forms and add to the job queue 
                 my $forms = $mech->forms();
@@ -87,11 +99,11 @@ sub work {
                    foreach my $form (@{$forms}) {
                        
                        if ( $forms_seen_ref->{ $form->action() }++ ) {
-                           print STDERR "--- skipping form ---\n";
+                           #print STDERR "--- skipping form ---\n";
                        } else {
                            $forms_seen_ref->{ $form->action() } = 1;
                            
-                           print STDERR "form action = ". $form->action() ."\n";
+                           #print STDERR "form action = ". $form->action() ."\n";
                            
                            my $job_args = {
                                   url => $processing_url,
@@ -137,6 +149,14 @@ sub work {
     
     }
 
+    ## timestamp end
+    my ($sec,$min,$hour,$mday,$mon,$year,$wday,
+    $yday,$isdst)=localtime(time);
+    printf "%4d-%02d-%02d %02d:%02d:%02d\n",
+    $year+1900,$mon+1,$mday,$hour,$min,$sec;
+    
+    print STDERR "Total URLs seen = keys( $urls_seen_ref )\n";
+    
     $job->completed();
 }
 
