@@ -4,6 +4,7 @@ use warnings;
 use TheSchwartz::Job;
 use base qw( TheSchwartz::Worker );
 use WWW::Mechanize;
+use URI::QueryParam;
 use Data::Dumper;
 use URI;
 use lib '../../';
@@ -67,7 +68,10 @@ sub work {
             
             ## URI query ?foo=bar - used for Directory Traversal attacks
             my $uri = $mech->uri();
+            ## catch for common wordpress query_string
             if ($uri->query && $uri->query !~ m/replytocom/) { 
+                
+                die Dumper $uri->query_param;
                 
                 if ( $uri_seen_ref->{ $uri->query }++ ) {
                     ## skip -> seen before
