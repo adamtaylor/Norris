@@ -49,6 +49,7 @@ sub work {
     unshift(@queue, $job_args);
     
     my $forms_seen_ref;
+    my $uri_seen_ref;
     
     while ( @queue >= 1 ) {
     
@@ -66,16 +67,23 @@ sub work {
             
             ## URI query ?foo=bar - used for Directory Traversal attacks
             my $uri = $mech->uri();
-            if ($uri->query  && $uri->query !~ m/replytocom/) { 
+            if ($uri->query && $uri->query !~ m/replytocom/) { 
                 
-                #print STDERR $uri . $uri->query . "\n"; 
+                if ( $uri_seen_ref->{ $uri->query }++ ) {
+                    ## skip -> seen before
+                } else {
+                    $uri_seen_ref->{ $uri->query } = 1;
+                
+                    #print STDERR $uri . $uri->query . "\n"; 
             
-                my $job_args = {
-                          url => $processing_url,
-                          uri => $uri,
-                          id => $id,
-                };
-                $client->insert( 'Norris::Scanner::Attacker', $job_args );
+                    my $job_args = {
+                              url => $processing_url,
+                              uri => $uri,
+                              id => $id,
+                    };
+                    $client->insert( 'Norris::Scanner::Attacker', $job_args );
+                    
+                }
             }
             
             my $response = $mech->response();
@@ -155,7 +163,7 @@ sub work {
     printf "%4d-%02d-%02d %02d:%02d:%02d\n",
     $year+1900,$mon+1,$mday,$hour,$min,$sec;
     
-    print STDERR "Total URLs seen = keys( $urls_seen_ref )\n";
+    print STDERR "Total URLs seen = " . keys( %$urls_seen_ref ) . ".\n";
     
     $job->completed();
 }
