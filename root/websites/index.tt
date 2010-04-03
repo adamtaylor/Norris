@@ -1,4 +1,4 @@
-[% WRAPPER page.tt title = c.config.name ; END %]
+[% title = "Project Norris | View all sites" %]
 
 <h3>All Websites</h3>
 

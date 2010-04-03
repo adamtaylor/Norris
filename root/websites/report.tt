@@ -1,4 +1,4 @@
-[% WRAPPER page.tt title = c.config.name ; END %]
+[% title = "Website Report" %]
 
 <h3>Website Report</h3>
 

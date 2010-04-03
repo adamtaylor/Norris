@@ -60,7 +60,16 @@ sub work {
         my $processing_url = $job_args->{'process'};
         my $urls_seen_ref = $job_args->{'urls_seen'};
     
+        # ## we gotta fix relative URLs
+        $base_url = $class->_clean_url( $base_url );
+        
+        if ($processing_url !~ m/^http/) {
+            $processing_url = $base_url . $processing_url;
+        }
+    
         eval { $mech->get( $processing_url ) };
+            
+        print STDERR "processing $processing_url \n";
         
         if ( $mech->success() ) {
             #print STDERR "grabbed the URL successfully, about to find_all_links\n";
@@ -71,12 +80,12 @@ sub work {
             ## catch for common wordpress query_string
             if ($uri->query && $uri->query !~ m/replytocom/) { 
                 
-                die Dumper $uri->query_param;
+                my $query = $class->_clean_query_string( $uri );
                 
-                if ( $uri_seen_ref->{ $uri->query }++ ) {
+                if ( $uri_seen_ref->{ $query }++ ) {
                     ## skip -> seen before
                 } else {
-                    $uri_seen_ref->{ $uri->query } = 1;
+                    $uri_seen_ref->{ $query } = 1;
                 
                     #print STDERR $uri . $uri->query . "\n"; 
             
@@ -99,6 +108,7 @@ sub work {
                 ## find all the links on the page with the same $base_url or [ TODO FIX THIS] relative links
                 #my $links = $mech->find_all_links( url_regex => qr/(^$base_url)|(^((?!http:\/\/).*))/i);
                 my $links = $mech->find_all_links( url_abs_regex => qr/(^$base_url.*)/i);
+                # Dumper $links;
                 #my $links = $mech->find_all_links();
                 #die Dumper $response->header(":refresh" => 1)->as_string();
                 #die Dumper $h->as_string();
@@ -115,7 +125,7 @@ sub work {
                        } else {
                            $forms_seen_ref->{ $form->action() } = 1;
                            
-                           #print STDERR "form action = ". $form->action() ."\n";
+                           print STDERR "form action = ". $form->action() ."\n";
                            
                            my $job_args = {
                                   url => $processing_url,
@@ -184,4 +194,18 @@ sub _clean_url {
     return $u->as_string;
 }
 
+sub _clean_query_string {
+    my $class = shift;
+    my $uri = shift;
+    
+    ## horrific!
+    my $u = $uri->as_string;
+    my $query = $uri->query;
+    $u =~ s/$query//;
+    my @query_param = $uri->query_param;
+    #print STDERR $query_param[0] . "\n";
+    $u = $u . $query_param[0];
+    
+    return $u;
+}
 1;

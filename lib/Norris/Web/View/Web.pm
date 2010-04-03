@@ -5,7 +5,17 @@ use warnings;
 
 use base 'Catalyst::View::TT';
 
-__PACKAGE__->config(TEMPLATE_EXTENSION => '.tt');
+__PACKAGE__->config(
+    TEMPLATE_EXTENSION => '.tt',
+    # Set the location for TT files
+    # INCLUDE_PATH => [
+    #         Norris::Web->path_to( 'root', 'src', 'websites' ),
+    #     ],
+    # Set to 1 for detailed timer stats in your HTML as comments
+    TIMER   => 0,
+    # This is your wrapper template located in the 'root/src'
+    WRAPPER => 'page.tt',
+    );
 
 =head1 NAME
 
