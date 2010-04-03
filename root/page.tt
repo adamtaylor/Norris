@@ -20,7 +20,7 @@
 
     	<a name="top"></a>
 
-    	<h1 id="logo-text"><a href="index.html" title="">Project Norris</a></h1>
+    	<h1 id="logo-text"><a href="/" title="">Project Norris</a></h1>
     	<p id="slogan">A Web Vulnerability Scanner</p>
 
     	<div  id="nav">
@@ -48,6 +48,24 @@
 
    <!-- /content-out -->
    </div>
+   
+   <!-- footer-bottom -->
+   <div id="footer-bottom">
+
+   	<p class="bottom-left">
+   		&copy; 2010 <strong>Adam Taylor &amp; Durham University</strong>&nbsp; &nbsp; &nbsp;
+   		Created by <a href="http://www.adamjctaylor.com/">Adam JC Taylor</a>
+   	</p>
+
+   	<p class="bottom-right">
+   		<a href="/">Home</a> |
+   		<a href="/websites/add/">Add A Site</a> |
+        <strong><a href="#top">Back to Top</a></strong>
+    </p>
+
+   <!-- /footer-bottom-->
+   </div>
+   
 
 </body>
 </html>
