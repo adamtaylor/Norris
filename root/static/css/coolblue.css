@@ -45,7 +45,7 @@ h1, h2, h3, h4 {
 	color: #555;
 	margin: 8px 25px;
 }
-h1 { font-size: 3.7em; font-weight: normal; letter-spacing: -2px; }
+h1 { font-size: 3.7em; font-weight: normal; letter-spacing: -3px; }
 h2 { font-size: 2.8em; font-weight: normal; }
 h3 { font-size: 2.2em; font-weight: normal; letter-spacing: -0.5px; padding-top: 15px; }
 h4 { font-size: 1.5em; }
@@ -146,6 +146,8 @@ form p {
 label {
 	font-weight: bold;
 	color: #666666;
+	width: 50px;
+    display: block;
 }
 input, select, textarea {
 	margin: 5px 0;
