@@ -1,4 +1,4 @@
-[% title = "Add a Website" %]
+[% title = "Project Norris | Add a Website" %]
 
 <h3>Add Website</h3>
 
@@ -7,11 +7,11 @@
     [% FOREACH col = websites_rs.result_source.columns %]
         [% IF col != "id" %]
         <p>
-            <label for="[% col %]">[% col %]
+            <label for="[% col %]">[% col %]:
                 <input type="text" name="[% col %]" value="" />
             </label>
         </p>
         [% END %]
     [% END %]
-    <p><input type="submit" value="Create &rarr;"/></p>
+    <p><input type="submit" value="Add &rarr;"/></p>
 </form>
