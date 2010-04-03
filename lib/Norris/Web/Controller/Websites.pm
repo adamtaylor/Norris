@@ -40,10 +40,23 @@ sub add : Chained('base'): PathPart('add'): Args(0) {
         
         my $websites_rs = $c->stash->{websites_rs};
         
-        my $new_website = $websites_rs->create({
-            url => $params->{url},
-            name => $params->{name},
-        });
+        $c->form(
+            url => [qw/NOT_BLANK HTTP_URL/],
+            name => [qw/NOT_BLANK/],
+        );
+        
+        my $result = $c->form;
+        
+        if ( !$result->has_error ) {
+            my $new_website = $websites_rs->create({
+                url => $params->{url},
+                name => $params->{name},
+            });
+            $c->redirect('/websites/index/');
+        }
+        else {
+            $c->redirect('/websites/add/');
+        }
         
         return;
     }

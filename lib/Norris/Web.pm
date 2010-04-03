@@ -18,7 +18,8 @@ use Catalyst qw/-Debug
                 ConfigLoader
                 Static::Simple
                 Unicode
-                Redirect/;
+                Redirect
+                FormValidator::Simple/;
 our $VERSION = '0.01';
 
 # Configure the application.
