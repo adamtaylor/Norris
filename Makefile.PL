@@ -13,8 +13,9 @@ requires 'Catalyst::Action::RenderView';
 
 requires 'Catalyst::View::TT';
 requires 'Catalyst::Plugin::Unicode';
-requires 'TheSchwartz';
 requires 'Catalyst::Plugin::Redirect';
+requires 'Catalyst::Plugin::FormValidator::Simple';
+requires 'TheSchwartz';
 requires 'WWW::Mechanize';
 requires 'URI::QueryParam';
 
