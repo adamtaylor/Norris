@@ -43,11 +43,26 @@
                    [% content %]
                 </div>
            </div>
+           
+           <!-- sidebar -->
+            <div id="sidebar">
+
+             	<div class="about-me">
+
+                	<h3>About Project Norris</h3>
+        		    <p>
+        		      Project Norris is a web application security scanning tool.  It crawls a website, and attacks any points of interest it finds (forms, url query strings etc.).  It uses a number of algorithms to try and detect XSS, SQLi and Directory Traversal vulnerabilities.  Once a scan is complete a report is generated.
+        			</p>
+
+                </div>
+            </div>
         <!-- content -->
        	</div>
 
    <!-- /content-out -->
    </div>
+   
+
    
    <!-- footer-bottom -->
    <div id="footer-bottom">
