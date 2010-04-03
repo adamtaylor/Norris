@@ -16,23 +16,24 @@
 <body>
     
     <!--header-->
-    <div id="header-wrap"><div id="header">
+    <div id="header-wrap">
+        <div id="header">
 
-    	<a name="top"></a>
+            <a name="top"></a>
 
-    	<h1 id="logo-text"><a href="/" title="">Project Norris</a></h1>
-    	<p id="slogan">A Web Vulnerability Scanner</p>
+            <h1 id="logo-text"><a href="/" title="">Project Norris</a></h1>
+            <p id="slogan">A Web Vulnerability Scanner</p>
 
-    	<div  id="nav">
-    		<ul>
-    			<li<a href="/websites/index">Home</a></li>
-    			<li><a href="[% c.uri_for(c.controller('Websites').action_for('add') ) %]">Add Site</a>
-    		</ul>
-    	</div>
+            <div id="nav">
+                <ul>
+                    <li<a href="/websites/index">Home</a></li>
+                    <li><a href="[% c.uri_for(c.controller('Websites').action_for('add') ) %]">Add Site</a>
+                </ul>
+            </div>
+        </div>
     </div>
-    <!-- end header-->
-    </div></div>
-    
+    <!-- /header -->
+
     <!-- content-outer -->
     <div id="content-wrap" class="clear" >
 
@@ -40,46 +41,47 @@
         <div id="content">
             <div id="main">
                 <div class="post">
-                   [% content %]
+                    [% content %]
                 </div>
-           </div>
-           
-           <!-- sidebar -->
-            <div id="sidebar">
-
-             	<div class="about-me">
-
-                	<h3>About Project Norris</h3>
-        		    <p>
-        		      Project Norris is a web application security scanning tool.  It crawls a website, and attacks any points of interest it finds (forms, url query strings etc.).  It uses a number of algorithms to try and detect XSS, SQLi and Directory Traversal vulnerabilities.  Once a scan is complete a report is generated.
-        			</p>
-
                 </div>
+
+                <!-- sidebar -->
+                <div id="sidebar">
+                    <div class="about-me">
+                        <h3>About Project Norris</h3>
+                        <p>
+                        Project Norris is a web application security scanning tool.  It crawls a website, and attacks any points of interest it finds (forms, url query strings etc.).  It uses a number of algorithms to try and detect XSS, SQLi and Directory Traversal vulnerabilities.  Once a scan is complete a report is generated.
+                        </p>
+                    </div>
+                <!-- /sidebar -->
+                </div>
+            <!-- /main -->    
             </div>
-        <!-- content -->
-       	</div>
+            
+        <!-- /content -->
+        </div>
 
-   <!-- /content-out -->
-   </div>
-   
+    <!-- /content-out -->
+    </div>
 
-   
-   <!-- footer-bottom -->
-   <div id="footer-bottom">
 
-   	<p class="bottom-left">
-   		&copy; 2010 <strong>Adam Taylor &amp; Durham University</strong>&nbsp; &nbsp; &nbsp;
-   		Created by <a href="http://www.adamjctaylor.com/">Adam JC Taylor</a>
-   	</p>
 
-   	<p class="bottom-right">
-   		<a href="/">Home</a> |
-   		<a href="/websites/add/">Add A Site</a> |
+    <!-- footer-bottom -->
+    <div id="footer-bottom">
+
+        <p class="bottom-left">
+        &copy; 2010 <strong>Adam Taylor &amp; Durham University</strong>&nbsp; &nbsp; &nbsp;
+        Created by <a href="http://www.adamjctaylor.com/">Adam JC Taylor</a>
+        </p>
+
+        <p class="bottom-right">
+        <a href="/">Home</a> |
+        <a href="/websites/add/">Add A Site</a> |
         <strong><a href="#top">Back to Top</a></strong>
-    </p>
+        </p>
 
-   <!-- /footer-bottom-->
-   </div>
+    <!-- /footer-bottom-->
+    </div>
    
 
 </body>
