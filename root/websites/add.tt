@@ -7,7 +7,7 @@
     [% FOREACH col = websites_rs.result_source.columns %]
         [% IF col != "id" %]
         <p>
-            <label for="[% col %]">[% col %]:
+            <label class="form" for="[% col %]">[% col %]:
                 <input type="text" name="[% col %]" value="" />
             </label>
         </p>
