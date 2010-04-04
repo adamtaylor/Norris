@@ -40,11 +40,12 @@ sub work {
     if ($uri) { 
         $point_id = _insert_point_of_interest( $website_id, $uri ); 
         _try_dir_traversal_attack( $point_id, $url, $uri, $mech );
+        _try_url_sql_injection_attack( $point_id, $url, $uri, $mech );
     }
     elsif ($form) { 
         $point_id = _insert_point_of_interest( $website_id, $form ); 
         _try_xss_attacks( $point_id, $url, $form, $mech );
-        _try_sql_injection_attacks( $point_id, $url, $form, $mech );
+        _try_sql_injection_attack( $point_id, $url, $form, $mech );
     }
     
     ## timestamp end
@@ -86,9 +87,9 @@ sub _try_xss_attacks {
       
     my %xss_attack_vectors = (
         
-        q[<script>alert("XSS")</script>] => q[<script>alert\("XSS"\)<\/script>],
-        q[';alert(String.fromCharCode(88,83,83))//\';alert(String.fromCharCode(88,83,83))//";alert(String.fromCharCode(88,83,83))//\";alert(String.fromCharCode(88,83,83))//--></SCRIPT>">'><SCRIPT>alert(String.fromCharCode(88,83,83))</SCRIPT>] => q[';alert\(String\.fromCharCode\(88,83,83\)\)\/\/\\';alert\(String\.fromCharCode\(88,83,83\)\)\/\/\";alert\(String\.fromCharCode\(88,83,83\)\)\/\/\\";alert\(String\.fromCharCode\(88,83,83\)\)\/\/--><\/SCRIPT>\">\'><SCRIPT>alert\(String\.fromCharCode\(88,83,83\)\)<\/SCRIPT>],
-        q[3,83))//\";alert(String.fromCharCode(88,83,83))//--></SCRIPT>">'><SCRIPT>alert(String.fromCharCode(88,83,83))</SCRIPT>] => q[3,83\)\)\/\/\\";alert\(String\.fromCharCode\(88,83,83\)\)\/\/--><\/SCRIPT>\">\'><SCRIPT>alert\(String\.fromCharCode\(88,83,83\)\)<\/SCRIPT>],
+        q[<script>alert("XSS")</script>] => q[<script>alert("XSS")</script>],
+        q[';alert(String.fromCharCode(88,83,83))//\';alert(String.fromCharCode(88,83,83))//";alert(String.fromCharCode(88,83,83))//\";alert(String.fromCharCode(88,83,83))//--></SCRIPT>">'><SCRIPT>alert(String.fromCharCode(88,83,83))</SCRIPT>] => q[';alert(String.fromCharCode(88,83,83))//\';alert(String.fromCharCode(88,83,83))//";alert(String.fromCharCode(88,83,83))//\";alert(String.fromCharCode(88,83,83))//--></SCRIPT>">'><SCRIPT>alert(String.fromCharCode(88,83,83))</SCRIPT>],
+        q[3,83))//\";alert(String.fromCharCode(88,83,83))//--></SCRIPT>">'><SCRIPT>alert(String.fromCharCode(88,83,83))</SCRIPT>] => q[3,83))//\";alert(String.fromCharCode(88,83,83))//--></SCRIPT>">'><SCRIPT>alert(String.fromCharCode(88,83,83))</SCRIPT>],
         q[';alert(String.fromCharCode(88,83,83))//\';alert(String.fromCharCode(88,83,83))//";alert(String.fromCharCode(88,83,83))//\";alert(String.fromCharCode(88,83,83))//--></SCRIPT>">'><SCRIPT>alert(String.fromCharCode(88,83,83))</SCRIPT>] => q[\';alert(String.fromCharCode(88,83,83))//\\\';alert(String.fromCharCode(88,83,83))//\";alert(String.fromCharCode(88,83,83))//\\\";alert(String.fromCharCode(88,83,83))//-->\">\'>]
     );
     
@@ -113,9 +114,9 @@ sub _try_xss_attacks {
             #print STDERR "request was successful\n";
                 
             #print STDERR Dumper $mech->response->code();
-            #print STDERR Dumper $mech->content();
+            print STDERR Dumper $mech->content();
         
-            if ( $mech->content() =~ m/$value/gm ) {
+            if ( $mech->content() =~ m/\Q$value\E/gm ) {
                 #print STDERR "--- XSS VULNERABILITY FOUND ---\n";
                 _insert_vulnerability( $point_id, 'XSS', $value );
                 last;
@@ -127,7 +128,7 @@ sub _try_xss_attacks {
     }
 }
 
-sub _try_sql_injection_attacks {
+sub _try_sql_injection_attack {
     my ($point_id, $url, $form, $mech) = @_;
 
     my $vector = "'";
@@ -159,7 +160,7 @@ sub _try_sql_injection_attacks {
         #print STDERR $mech->content();
         
         
-        if ( ($mech->content() =~ m/SQL/gi && $mech->content() =~ m/error/gi) || $mech->status() =~ m/5../gi || $mech->content() =~ m/Microsoft Access Driver/gi || $mech->content() =~ m/Syntax error/gi || $mech->content() =~ m/Incorrect syntax/gi ) {
+        if ( ($mech->content() =~ m/SQL/gi && $mech->content() =~ m/error/gi) || $mech->status() =~ m/5../gi || $mech->content() =~ m/Microsoft Access Driver/gi || $mech->content() =~ m/Syntax error/gi || $mech->content() =~ m/Incorrect syntax/gi || $mech->content() =~ m/Warning:/gi ) {
             #print STDERR "--- SQLi VULNERABILITY FOUND -> Point ID = $point_id ---\n";
             
             #print STDERR $mech->content();
@@ -198,6 +199,31 @@ sub _try_dir_traversal_attack {
             }
         }   
     }
+}
+
+sub _try_url_sql_injection_attack {
+    my ($point_id, $url, $uri, $mech) = @_;
+    
+    my ($param, $value) = $uri->query_form;
+    
+    #print STDERR "\$param == $param - \$value == $value \n";
+    
+    my $request = "'";
+        
+    $uri->query_form( $param => $request );
+    
+    #print STDERR $uri->as_string . "\n";
+    
+    eval { $mech->get( $uri->as_string ) };
+    
+    if ( $mech->success() ) {
+        #print STDERR "page request successful \n";
+        if ( ($mech->content() =~ m/SQL/gi && $mech->content() =~ m/error/gi) || $mech->status() =~ m/5../gi || $mech->content() =~ m/Microsoft Access Driver/gi || $mech->content() =~ m/Syntax error/gi || $mech->content() =~ m/Incorrect syntax/gi || $mech->content() =~ m/Warning:/gi ) {
+            #print STDERR "--- Directory Traversal Vulnerability Found ---\n";
+            _insert_vulnerability( $point_id, 'SQLi', $uri->as_string );
+        }
+    }   
+    
 }
 
 sub _insert_vulnerability {
