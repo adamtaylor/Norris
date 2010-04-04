@@ -1,1 +1,2 @@
+[% title = "Project Norris | Performing Scan" %]
 [% IF result %]<p>[% "The following URL has been added to the scanning Job Queue " _ url %]</p>[% END %]
