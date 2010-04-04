@@ -146,7 +146,9 @@ form p {
 label {
 	font-weight: bold;
 	color: #666666;
-	width: 50px;
+}
+label.form {
+    width: 50px;
     display: block;
 }
 input, select, textarea {
