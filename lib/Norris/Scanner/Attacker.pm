@@ -113,7 +113,7 @@ sub _try_xss_attacks {
             #print STDERR "request was successful\n";
                 
             #print STDERR Dumper $mech->response->code();
-            print STDERR Dumper $mech->content();
+            #print STDERR Dumper $mech->content();
         
             if ( $mech->content() =~ m/\Q$value\E/gm ) {
                 #print STDERR "--- XSS VULNERABILITY FOUND ---\n";
